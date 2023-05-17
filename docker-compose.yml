@@ -1,5 +1,13 @@
-version: '3'
+version: "3"
 services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: recipe-book-mongodb
+    volumes:
+      - mongodb_data:/data/db
+
   recipe-book-api:
     build:
       context: ./api
@@ -7,8 +15,11 @@ services:
       - "3080:3080"
     container_name: recipe-book-api
     volumes:
-       - ./api:/usr/src/app/api
-       - /usr/src/app/api/node_modules
+      - ./api:/usr/src/app/api
+      - /usr/src/app/api/node_modules
+    depends_on:
+      - mongodb
+
   recipe-book-ui:
     build:
       context: ./ui
@@ -17,7 +28,8 @@ services:
     container_name: recipe-book-ui
     stdin_open: true
     volumes:
-       - ./ui:/usr/src/app/ui
-       - /usr/src/app/ui/node_modules
+      - ./ui:/usr/src/app/ui
+      - /usr/src/app/ui/node_modules
 
-######## Other containers #########
+volumes:
+  mongodb_data:
